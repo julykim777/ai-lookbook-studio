@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI 룩북 스튜디오</title>
+  <meta name="description" content="사진 한 장으로 캐주얼·비즈니스·스트리트·빈티지 룩북을 만들어 보세요." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">◐</span>
+      <div>
+        <h1>AI 룩북 스튜디오</h1>
+        <p>사진 한 장으로 만드는 가상 스타일링</p>
+      </div>
+    </div>
+    <span id="modeBadge" class="badge" title="현재 예시(목업) 모드로 동작합니다">예시 모드</span>
+  </header>
+
+  <main class="layout">
+    <!-- ===== 왼쪽: 입력 ===== -->
+    <section class="panel" aria-labelledby="inputTitle">
+      <h2 id="inputTitle" class="sr-only">스타일링 설정</h2>
+
+      <!-- 1. 사진 업로드 -->
+      <div class="block">
+        <div class="block-head">
+          <span class="num">1</span>
+          <h3>사진 업로드</h3>
+        </div>
+        <label id="dropzone" class="dropzone" for="fileInput" tabindex="0">
+          <input id="fileInput" type="file" accept="image/jpeg,image/png" hidden />
+          <img id="previewImg" class="preview" alt="업로드한 사진 미리보기" hidden />
+          <div id="dropHint" class="drop-hint">
+            <span class="drop-icon" aria-hidden="true">⇪</span>
+            <strong>사진을 끌어놓거나 눌러서 선택</strong>
+            <small>인물 사진 또는 전신 의상 사진 · JPG/PNG · 최대 10MB</small>
+          </div>
+        </label>
+        <div class="file-row">
+          <span id="fileName" class="file-name">선택된 파일 없음</span>
+          <button id="sampleBtn" type="button" class="link-btn">예시 사진 사용</button>
+        </div>
+        <p id="fileError" class="error" role="alert" hidden></p>
+      </div>
+
+      <!-- 2. 스타일 선택 -->
+      <div class="block">
+        <div class="block-head">
+          <span class="num">2</span>
+          <h3>스타일 선택</h3>
+        </div>
+        <div class="styles" role="radiogroup" aria-label="패션 스타일">
+          <label class="style-card">
+            <input type="radio" name="style" value="casual" checked />
+            <span class="swatch casual" aria-hidden="true"></span>
+            <span class="style-name">캐주얼</span>
+            <span class="style-desc">편안한 데일리룩</span>
+          </label>
+          <label class="style-card">
+            <input type="radio" name="style" value="business" />
+            <span class="swatch business" aria-hidden="true"></span>
+            <span class="style-name">비즈니스</span>
+            <span class="style-desc">단정한 오피스룩</span>
+          </label>
+          <label class="style-card">
+            <input type="radio" name="style" value="street" />
+            <span class="swatch street" aria-hidden="true"></span>
+            <span class="style-name">스트리트</span>
+            <span class="style-desc">자유로운 힙합·스케이터</span>
+          </label>
+          <label class="style-card">
+            <input type="radio" name="style" value="vintage" />
+            <span class="swatch vintage" aria-hidden="true"></span>
+            <span class="style-name">빈티지</span>
+            <span class="style-desc">레트로 감성</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 3. 추가 요청 -->
+      <div class="block">
+        <div class="block-head">
+          <span class="num">3</span>
+          <h3>추가 요청 <small>(선택)</small></h3>
+        </div>
+        <textarea id="notes" rows="3" maxlength="300"
+          placeholder="예) 베이지 톤으로, 가을 주말 카페 데이트 분위기"></textarea>
+        <div class="chips" aria-label="빠른 입력">
+          <button type="button" class="chip">파스텔 톤</button>
+          <button type="button" class="chip">모노톤</button>
+          <button type="button" class="chip">여름 휴가</button>
+          <button type="button" class="chip">면접·출근</button>
+          <button type="button" class="chip">겨울 아우터</button>
+        </div>
+        <div class="counter"><span id="noteCount">0</span>/300</div>
+      </div>
+
+      <button id="generateBtn" type="button" class="primary" disabled>스타일링 생성</button>
+
+      <div id="progress" class="progress" hidden aria-live="polite">
+        <div class="bar"><span id="progressFill"></span></div>
+        <p id="progressText">준비 중…</p>
+      </div>
+      <p id="genError" class="error gen-error" role="alert" hidden></p>
+    </section>
+
+    <!-- ===== 오른쪽: 결과 ===== -->
+    <section class="panel result-panel" aria-labelledby="resultTitle">
+      <div class="result-head">
+        <h2 id="resultTitle">결과 비교</h2>
+        <div class="view-toggle" role="tablist" aria-label="비교 방식">
+          <button type="button" role="tab" class="tab active" data-view="slider" aria-selected="true">슬라이더</button>
+          <button type="button" role="tab" class="tab" data-view="side" aria-selected="false">나란히</button>
+        </div>
+      </div>
+
+      <div id="emptyState" class="empty">
+        <div class="empty-art" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <p>사진을 올리고 스타일을 고른 뒤<br /><strong>스타일링 생성</strong>을 눌러 주세요.</p>
+      </div>
+
+      <!-- 슬라이더 비교 -->
+      <div id="sliderView" class="compare" hidden>
+        <img id="cmpAfter" alt="변환된 룩북 이미지" />
+        <div id="cmpBeforeWrap" class="before-wrap">
+          <img id="cmpBefore" alt="원본 사진" />
+        </div>
+        <div id="cmpHandle" class="handle" aria-hidden="true"><span>⇆</span></div>
+        <input id="cmpRange" class="range" type="range" min="0" max="100" value="50"
+          aria-label="원본과 결과 비교 위치" />
+        <span class="tag tag-left">원본</span>
+        <span class="tag tag-right">룩북</span>
+      </div>
+
+      <!-- 나란히 비교 -->
+      <div id="sideView" class="side" hidden>
+        <figure><img id="sideBefore" alt="원본 사진" /><figcaption>원본</figcaption></figure>
+        <figure><img id="sideAfter" alt="변환된 룩북 이미지" /><figcaption id="sideCaption">룩북</figcaption></figure>
+      </div>
+
+      <div id="resultActions" class="actions" hidden>
+        <button id="downloadBtn" type="button" class="primary">이미지 다운로드</button>
+        <button id="regenBtn" type="button" class="ghost">다시 생성</button>
+      </div>
+
+      <p class="disclaimer">
+        생성 이미지는 가상 스타일링 참고용이에요. 얼굴·의상 세부가 원본과 다를 수 있고 실제 사이즈·핏을 보장하지 않아요.
+        본인 또는 사용 허락을 받은 사진만 올려 주세요.
+      </p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "name": "ai-lookbook-studio",
+  "version": "1.0.0",
+  "description": "사진 한 장을 캐주얼·비즈니스·스트리트·빈티지 룩북으로 바꿔 주는 AI 가상 스타일링 웹 앱",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.10",
+    "express": "^5.3.0",
+    "multer": "^2.5.0",
+    "openai": "^7.55.0"
+  }
+}

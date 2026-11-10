@@ -1,0 +1,29 @@
+# 환경변수 (API 키) — 절대 커밋하지 않음
+.env
+.env.*
+!.env.example
+
+# 의존성
+node_modules/
+
+# Vercel
+.vercel
+
+# 테스트 이미지 · 생성 결과물 (개인 사진이 올라가지 않도록)
+test-images/
+samples/
+uploads/
+outputs/
+lookbook-*.jpg
+lookbook-*.png
+public/__*
+
+# 로그
+*.log
+npm-debug.log*
+
+# OS / 에디터
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
